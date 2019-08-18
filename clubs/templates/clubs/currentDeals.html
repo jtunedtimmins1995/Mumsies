@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+
+    {% block head %}
+    <title>Current Deals</title>
+    {% endblock %}
+
+    {% block body %}
+    <h1 style= "margin-left: 10px">Current Deals:</h1>
+  
+        <table id="currentDeals" class="table">
+            <thead class="thead-dark"> 
+              <tr>
+                <th scope="col" style="width:50%">Description</th>
+                <th scope="col" style="width:30%">Code</th>
+                <th scope="col" style="width:10%">Time Left</th>
+                <th scope="col" style="width:10%">Edit</th>
+              </tr>
+            </thead>
+            <tbody id="currentBody">
+      </tr>
+      {% for deal in deals %}
+      <tr id = "{{deal.id}}row"> 
+        <td>{{deal.description}}</td>
+        <td>{{deal.code}}</td>
+        <td id={{deal.id}}>Calculating...</td>
+        <td id ="{{deal.id}}edit"><button id = "{{deal.id}}editButton" type="button" class="btn btn-warning" onclick= "window.location.href='{% url 'edit_deal' deal.id %}';">Edit</button></td>
+          
+      </tr>
+      
+      {% endfor  %}
+      </tbody>
+    </table>
+    <h1 style= "margin-left: 10px">Past Deals:</h1>
+  
+        <table class="table">
+            <thead class="thead-dark"> 
+                <tr>
+                    <th scope="col" style="width:50%">Description</th>
+                    <th scope="col" style="width:30%">Code</th>
+                    <th scope="col" style="width:10%">Status</th>
+                    <th scope="col" style="width:10%">Replicate</th>
+                    
+                </tr>
+            </thead>
+            <tbody id='passedDeals'>
+      </tr>
+      {% for deal in passedDeals %}
+      <tr>
+        <td>{{deal.description}}</td>
+        <td>{{deal.code}}</td>
+        <td>Expired</td>
+        <td><button type="button" onclick= "window.location.href='{% url 'replicate_deal' deal.id %}'" class="btn btn-warning">Replicate</button></td>
+        
+          
+      </tr>
+      
+      {% endfor  %}
+      </tbody>
+    </table>
+
+    <script type="text/javascript">
+      var interval = setInterval(Timer, 1000)
+      function Timer() {
+        
+        var mainTable = document.getElementById("currentBody")
+        var today = new Date()
+        var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+
+        var left = '{{user.username}}'
+        var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate()
+        '{% for deal in deals %}'
+        var Date1 = new Date("{{ deal.endTime.isoformat }}")
+        var datediff = Math.abs(Date1 - today);
+        if (datediff < 1000) {
+          console.log('here')
+          var mainRow = document.getElementById("{{deal.id}}row")
+          var oldTable = document.getElementById("passedDeals")
+          document.getElementById("{{deal.id}}").innerHTML = "Expired"
+          editCont = document.getElementById("{{deal.id}}edit")
+          editBut = document.getElementById("{{deal.id}}editButton")
+          editCont.removeChild(editBut)        
+          var newElement = document.createElement("button")
+          newElement.type = "button";
+          newElement.setAttribute('onclick',"window.location.href='{% url 'replicate_deal' deal.id %}'") 
+          newElement.className = "btn btn-warning";
+          newElement.innerHTML = "Replicate";
+          editCont.appendChild(newElement)
+          mainTable.removeChild(mainRow)
+          oldTable.appendChild(mainRow)
+        }
+        else{
+          document.getElementById("{{deal.id}}").innerHTML =  msToTime(datediff) + " "
+        
+        }
+        '{%  endfor  %}'
+        if (mainTable.getElementsByTagName('tr').length == 0){
+          clearInterval(interval)
+        }
+      }
+
+
+
+      
+
+      function msToTime(duration) {
+        var milliseconds = parseInt((duration % 1000) / 100),
+        seconds = Math.floor((duration / 1000) % 60),
+        minutes = Math.floor((duration / (1000 * 60)) % 60),
+        hours = Math.floor((duration / (1000 * 60 * 60)) % 24);
+
+        hours = (hours < 10) ? "0" + hours : hours;
+        minutes = (minutes < 10) ? "0" + minutes : minutes;
+        seconds = (seconds < 10) ? "0" + seconds : seconds;
+        var output = hours + ": " + minutes + ": " + seconds
+        return output.toString()
+      }
+    </script>
+    {% endblock %}
+
+
+   

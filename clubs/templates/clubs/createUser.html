@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+    {% block head %}
+    <title>Create User</title>
+    {% endblock %}
+
+    {% block body %}
+    <h1 style= "margin-left: 10px">Please Create Your User Below:</h1>
+    <form style= "margin-left: 10px" class="" action="" method="post">
+            {% csrf_token %}
+            
+            <table>
+                    {% for field in RegForm %}
+            <tr>
+                <td style = "padding-right: 10px"> 
+              <label for="exampleInputEmail1">{{field.label_tag}}</label>
+            </td>
+            <td style = "padding-right: 10px"> 
+              {{field}}
+            </td>
+
+            {% for error in field.errors %}
+            <td>
+            <p style="color: red">{{ error }}</p>
+            </td>
+            {% endfor %}
+            </tr>
+              {% endfor %}
+              {% for field in ClubForm %}
+            <tr>
+                    <td style = "padding-right: 10px"> 
+              <label for="exampleInputEmail1">{{field.label_tag}}</label>
+            </td>
+            <td style = "padding-right: 10px"> 
+              {{field}}
+            </td>
+            {% for error in field.errors %}
+            <td>
+            <p style="color: red">{{ error }}</p>
+            </td>
+            {% endfor %}
+            
+            </tr>
+              {% endfor %}
+
+            </table>
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </form>
+    {% endblock %}

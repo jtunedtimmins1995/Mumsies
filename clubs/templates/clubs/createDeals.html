@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+    {% block head %}
+    {% if use == 'create' %}
+    <title>Create Deal</title>
+    {% else %}
+    <title>Edit Deal</title>
+    {% endif %}
+    {% endblock %}
+
+    {% block body %}
+    {% if use == 'create' %}
+    <h1 style= "margin-left: 10px">Please Create Your Deal Below:</h1>
+    {% else %}
+    <h1 style= "margin-left: 10px">Edit Your Deal Below:</h1>
+
+   
+    {% endif %}
+    {% if use == 'Cannot Edit' %}
+    <h1 style= "margin-left: 10px">This Deal has already expired</h1>
+    <p>Do you wish to replicate it?</p>
+    <p><button type="button" onclick= "window.location.href='{% url 'replicate_deal' id %}'" class="btn btn-warning">Replicate</button></p>
+    {% else %}
+    <form style= "margin-left: 10px" class="" action="" method="post">
+        {% csrf_token %}
+        
+        <table>
+                {% for field in form %}
+        <tr>
+            <td style = "padding-right: 10px"> 
+          <label for="exampleInputEmail1">{{field.label_tag}}</label>
+        </td>
+        <td style = "padding-right: 10px"> 
+          {{field}}
+        </td>
+
+        {% for error in field.errors %}
+        <td>
+        <p style="color: red">{{ error }}</p>
+        </td>
+        {% endfor %}
+        </tr>
+          {% endfor %}
+
+        <tr>
+            <td>
+                <label>Duration:</label>
+            </td>
+            <td>
+                 {% if use == 'create' %}
+                <input type="time" name="Duration"></input>
+                {% else %}
+                <input value={{timeLeft}} type="time" name="Duration"></input>
+                {% endif %}
+            </td>
+        </tr>
+         
+        </table>
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
+      {% endif %}
+    
+    {% endblock %}
